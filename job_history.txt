@@ -1,0 +1,10 @@
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (102, '13-JAN-93', '24-JUL-98', 'IT_PROG', 60);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (101, '21-SEP-89', '27-OCT-93', 'AC_ACCOUNT', 110 );
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (101,'28-OCT-93', '15-MAR-97', 'AC_MGR', 110);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (201, '17-FEB-96', '19-DEC-99', 'MK_REP', 20);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (114, '24-MAR-98', '31-DEC-99','ST_CLERK', 50);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (122, '01-JAN-99', '31-DEC-99', 'ST_CLERK', 50);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (200, '17-SEP-87', '17-JUN-93', 'AD_ASST', 90);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (176, '24-MAR-98', '31-DEC-98', 'SA_REP', 80);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (176, '01-JAN-99', '31-DEC-99', 'SA_MAN', 80);
+Insert into test_ma_job_history(emp_id, start_date, end_date, job_id, dept_id) values (200, '01-JUL-94', '31-DEC-98', 'AC_ACCOUNT', 90);
