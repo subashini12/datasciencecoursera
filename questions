@@ -1,0 +1,251 @@
+Question 1 		Which of the following files is the correct name and location of deployment descriptor of a web application. Assume that the web application is rooted at doc-root. Select the one correct answer ?
+
+
+Question 2 		If a single client makes two requests, how many threads will be created by the container ?
+
+
+Question 3 		Which method ensures that the session will never be expunged by the container ?
+
+
+Question 4 		Which method is used to store file in the server ?
+
+
+Question 5 		Which character is used to separate the URI and query string ?
+
+
+Question 6 		Which listener will get notified when a context is created?
+
+
+Question 7 		What method will get executed on clicking the following code.?
+<form method="GET" action="/TestServlet">
+<input type="text" name="name">
+<input type="submit" value="Submit">
+</form>
+
+
+Question 8 		Which of the following listeners will be invoked ,when a session is created?
+
+
+Question 9 		What will be the output of the following expression ?
+<%= System.out.println("Hello.."); %>
+Your Answer		Hello..
+
+Question 10 		Consider the following code snippet of servlet code:
+public void doGet (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+PrintWriter out = response.getWriter();
+String value = getValue ();
+if (value == null) response.sendError (HttpServletResponse.SC_NOT_FOUND, "Failed");
+
+response.sendRedirect ("test.jsp");
+}
+If the getValue () method returns null , which of the following statements are true?
+
+
+Question 11 		Which of these is true about deployment descriptors. Select one correct answer.
+
+
+Question 12 		What is the return type of request.getParameterValues()
+
+
+Question 13 		HTTP HEAD method is used for ?
+
+
+Question 14 		Which exception will be thrown, when a servlet is unavailable temporarily ?
+
+
+Question 15 		sendRedirect is a method of which class/interface?
+
+
+Question 16 		What will be the output of the following JSP code?
+<html><body> <%! int a = 20; %> <% int a = 10; %> <%! int b = 30; %> Now b = <%= b * a %> </body></html>
+
+
+Question 17 		To send binary output to response, which method of HttpServletResponse is used to get the Writer/ Stream object ?
+
+
+Question 18 		Which of the following code snippet is thread safe ? Assume all imports and declarations are done correctly.
+
+
+Question 19 		In a JSP custom tag , which method would you use to access JSP implicit variable that references application scope ?
+
+
+Question 20 		Your application is using a third party jar. Where will you keep this jar file ?
+
+
+Question 21 		Which is the default HTTP form method?
+
+
+Question 22 		Which scope is thread safe ?
+
+
+Question 23 		Which interface is having method getSession() ?
+
+
+Question 24 		Which XML tag is used to specify the JSP page directive ?
+
+
+Question 25 		Which method can be used to keep track of number of concurrent users?
+
+
+Question 26 		Which of the following can be used to configure the JSP container to ignore EL expressions?
+
+
+Question 27 		Which of the following statements is true regarding MyServlet?
+
+import javax.servlet.*;
+import javax.servlet.http.*:
+import java.io.*;
+
+public class MyServlet extends HttpServlet implements SingleThreadModel
+{
+String myName;
+
+public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+response.setContentType("text/plain");
+PrintWriter out = res.getWriter();
+myName = req.getParameter("name");
+sayHello(out);
+out.close();
+}
+
+public void sayHello(PrintWriter out) {
+out.println("Hello " + myName);
+}
+}
+
+
+Question 28 		In order to redirect a servlet , what is the method used ?
+
+
+Question 29 		Which method is used to specify the content of the response is a binary file?
+
+
+Question 30 		If the web application is distributed across multiple JVMs, how many instances of the servlet will be created ?
+
+
+Question 31 		Which method is used to log messages from a servlet ?
+
+
+Question 32 		Which element of the deployment descriptor is used to specify the class of the Servlet. ?
+
+
+Question 33 		Which of the following regarding Design Patterns are correct?
+
+
+Question 34 		Which method is used to get the cookie from the request?
+
+
+Question 35 		What is the argument for init() method ? Select all that apply.
+
+
+Question 36 		What is the default scope for <jsp:useBean>
+
+
+Question 37 		Which method correctly specifies that the cookie must be alive for one hour ? Assume all variables are declared and initialized properly.
+
+
+Question 38 		public class MyServlet extends HttpServlet {
+private int x = 0;
+public MyServlet (int x) {
+this.x = x;
+}
+public void doGet (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+x++;
+PrintWriter out = response.getWriter();
+out.println(x);
+}
+}
+What will be the output (assume all imports are done correctly), when invoking MyServlet ?
+
+
+Question 39 		Which method is used by a servlet to place its session id in the URL ?
+
+
+Question 40 		Which method is used to retrieve objects from session?
+
+
+Question 41 		Which method is used for finding out what the server is receiving ?
+
+
+Question 42 		Which method is called when a context is initialized ?
+
+
+Question 43 		Which is the correct way to set a context initialization parameter ?
+
+
+Question 44 		Which of the following is the proper way to include java.util package in your jsp page?
+
+
+Question 45 		Which method is used to add a cookie to the client ? Assume all variables are declared and initialized properly
+
+
+Question 46 		Which among the following will compile ?
+
+
+Question 47 		Which of the following HTTP methods are not idempotent?
+
+
+Question 48 		What listener is used to know when a servlet request attribute is replaced ?
+
+
+Question 49 		When a user clicks on a link in a page, which method will get invoked ?
+
+
+Question 50 		<%@ page language ="java" session="false" isErrorPage="false" %>
+which of the following JSP implicit object will not be available to the JSP page ? Select one
+
+
+Question 51 		Which element of the deployment descriptor of a web application includes the welcome-file-list element as a sub element.
+
+
+Question 52 		True or False ? A new servlet is created each time a client request a servlet ?
+
+
+Question 53 		Which method is used to get the HTTP method of the request?
+
+
+Question 54 		Which method in conjunction with forward will cause an exception ?
+
+
+Question 55 		Which of the following listeners will be called when a context is destroyed?
+
+
+Question 56 		What is data integrity ?
+
+
+Question 57 		Which method is used to retrieve a form value in a JSP or Servlet?
+
+
+Question 58 		What will be the output of the following code? Assume that all the variables are declared properly
+String str= request.getDateHeader("Accept-Language");
+out.println(str);
+
+
+Question 59 		Which of these is a correct example of specifying a listener element resented by MyClass class. Assume myServlet element is defined correctly. Select one correct answer.
+
+
+Question 60 		What are the mandatory sub elements of <login-config> element ?
+
+
+Question 61 		Which of the following is legal JSP syntax to print the value of i. Select the one correct answer
+
+
+Question 62 		Which method is used to know when a request is created ?
+
+
+Question 63 		What will be the output , when accessing the following servlet
+
+import javax.servlet.http.*;
+
+public class TestServlet extends HttpServlet {
+
+}
+
+
+Question 64 		All Servlets implement which interface ?
+
+
+Question 65 		What getInitParameterNames() of ServletContext does ?
+
+
+Question 66 		Which listener will get notified when an attribute to the context is added?
