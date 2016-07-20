@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE StateMachine PUBLIC "-//SELLA//DTD StateMachine 1.0//EN" "StateMachine.dtd">
+
+<StateMachine Name="AnagConfigCompAdmin" Secure="true">
+<IOParams>
+        <Input Params=""/>
+        <Output Params=""/>
+</IOParams>
+	<Event Name="Default" Default="true" Executer="it.sella.anagrafe.sm.admin.anagrafecompadmin.AnagrafeCompatabilityAdminDefaultExecuter">
+            <Transition Name="TrConferma" Target="AnagrafeCompAdmin"/>
+		    <Transition Name="TrNonConferma" Target="AnagrafeCompAdmin"/>
+      </Event>
+      <State Name="AnagrafeCompAdmin">
+       <Event Name="Conferma" Executer="it.sella.anagrafe.sm.admin.anagrafecompadmin.AnagrafeCompConfermaExecuter" Retrieve="ClassViewList">
+            <Transition Name="TrConferma" Target="AnagrafeCompAdmin"/>
+		    <Transition Name="TrNonConferma" Target="AnagrafeCompAdmin"/>
+	  </Event>
+      <Event Name="Update" Executer="it.sella.anagrafe.sm.admin.anagrafecompadmin.AnagrafeCompatibilityUpdateExecuter"  Retrieve="ClassViewList">
+            <Transition Name="TrConferma" Target="AnagrafeCompAdmin"/>
+		    <Transition Name="TrNonConferma" Target="AnagrafeCompAdmin"/>
+	  </Event>
+	  <Event Name="Annulla" Clear="">
+			<Transition Name="TrHomePage" Target="Pop"/>
+        </Event>
+    </State>
+     <State Name="Pop" Final="true">
+     </State>
+</StateMachine>

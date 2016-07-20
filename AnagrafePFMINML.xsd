@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	attributeFormDefault="unqualified" elementFormDefault="qualified">
+	<xsd:element name="SOGGETTI" type="SOGGETTIType" />
+	<xsd:complexType name="SOGGETTIType">
+		<xsd:sequence>
+			<xsd:element name="SOGGETTO" type="SOGGETTOType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SOGGETTOType">
+		<xsd:sequence>
+			<xsd:element name="DATI_ANAGRAFICI" type="DATI_ANAGRAFICIType" />
+			<xsd:element name="ATTRIBUTI_ESTERNI" type="ATTRIBUTI_ESTERNIType"
+				minOccurs="0" />
+			<xsd:element name="DATI_FISCALI" type="DATI_FISCALIType"
+				minOccurs="0" />
+			<xsd:element maxOccurs="unbounded" name="RECAPITI" type="RECAPITIType"
+				minOccurs="0" />
+			<xsd:element maxOccurs="6" name="DATI_PRIVACY" type="DATI_PRIVACYType"
+				minOccurs="0" />
+			<xsd:element maxOccurs="unbounded" name="COLLEGAMENTI"
+				type="COLLEGAMENTIType" minOccurs="0" />
+		</xsd:sequence>
+		<xsd:attribute name="TipoSoggetto" type="xsd:string" />
+	</xsd:complexType>
+	<xsd:complexType name="COLLEGAMENTIType">
+		<xsd:sequence>
+			<xsd:element name="TIPO_COLLEGAMENTO">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="MINML" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="SOGGETTO_COLLEGANTE" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATI_PRIVACYType">
+		<xsd:sequence>
+			<xsd:element name="CODICE" type="xsd:string" />
+			<xsd:element name="VALORE" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RECAPITIType">
+		<xsd:sequence>
+			<xsd:element name="TIPO_RECAPITO" type="xsd:string" />
+			<xsd:element name="PREFISSO_INT" type="xsd:string"
+				minOccurs="0" nillable="true" />
+			<xsd:element name="VALORE" type="xsd:string" />
+			<xsd:element name="NOTE" type="xsd:string" minOccurs="0"
+				nillable="true" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATI_FISCALIType">
+		<xsd:all>
+			<xsd:element name="CODICE_FISCALE" type="xsd:string"
+				minOccurs="0" />
+		</xsd:all>
+	</xsd:complexType>
+	<xsd:complexType name="ATTRIBUTI_ESTERNIType">
+		<xsd:all>
+			<xsd:element name="SESSO" type="xsd:string" minOccurs="0" />
+		</xsd:all>
+	</xsd:complexType>
+	<xsd:complexType name="DATI_ANAGRAFICIType">
+		<xsd:sequence>
+			<xsd:element name="NOME" type="xsd:string" />
+			<xsd:element name="COGNOME" type="xsd:string" />
+			<xsd:element name="DATA_NASCITA" type="DATAType" />
+			<xsd:element name="CITTA_NASCITA" type="xsd:string" />
+			<xsd:element name="PROVINCIA_NASCITA" type="xsd:string" />
+			<xsd:element name="NAZIONE_NASCITA" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATAType">
+		<xsd:sequence>
+			<xsd:element name="GIORNO" type="xsd:string" />
+			<xsd:element name="MESE" type="xsd:string" />
+			<xsd:element name="ANNO" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE StateMachine PUBLIC "-//SELLA//DTD StateMachine 1.0//EN" "StateMachine.dtd">
+
+<StateMachine Name="CensimentoAZ" Secure="true">
+
+    <State Name="CensimentoAZStatesHomePage" Default="true">
+        <Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.DefaultExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="Ricerca" Type="Push" Application="RicercaAZ" InputParams="MOTIVI"
+                         OutputParams="aziendatransitionname,MOTIVI,AziendaSoggettoId,Anagrafe_az" />
+             <Transition Name="TrAttribute" Target="IndirizziRecapitiPrivacy"/>
+             <Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrVariazioneAZ" Target="RiepilogoAzienda"/>
+             <Transition Name="TrNonConferma" Target="Pop"/>
+             <Transition Name="Pop" Target="Pop"/>
+             <Transition Name="TrNonDisponibilita" Target="NonDisponibilitaErrorPage"/>
+        </Event>
+    </State>
+	<State Name="NonDisponibilitaErrorPage">
+      <Event Name="Annulla">
+         <Transition Name="TrConferma" Target="Pop"/>
+      </Event>
+ 	 </State>
+    <State Name="IndirizziRecapitiPrivacy" >
+        <Event Name="GeograficaRicerca" Executer="it.sella.anagrafe.sm.censimentoaz.GeograficaRicercaExecuter" Retrieve="MOTIVI">
+            <Transition Name="TrRicerca" Type="Push" Application="GeograficaRicerca" InputParams="OPERATION,OPERATION_NAME" OutputParams="GEOGRAFICA_ID" Target="ReloadIRP"/>
+        </Event>
+
+        <Event Name="RecapitiAggiungi" Executer="it.sella.anagrafe.sm.censimentoaz.RecapitiAggiungiExecuter">
+             <Transition Name="TrConferma" Target="IndirizziRecapitiPrivacy"/>
+        </Event>
+        <!-- <Event Name="JNorm" Secure="true">
+             <Transition Name="TrConferma" Target="IndirizziRecapitiPrivacy"/>
+        </Event>  -->
+        <Event Name="RecapitiModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RecapitiModificaExecuter">
+             <Transition Name="TrConferma" Target="IndirizziRecapitiPrivacy"/>
+        </Event>
+        <Event Name="RecapitiElimina" Executer="it.sella.anagrafe.sm.censimentoaz.RecapitiEliminaExecuter">
+             <Transition Name="TrConferma" Target="IndirizziRecapitiPrivacy"/>
+        </Event>
+        <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.IndirizziRecapitiPrivacyExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+             <Transition Name="TrNonConferma" Target="IndirizziRecapitiPrivacy"/>
+             <Transition Name="TrModifica" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="IRPIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter">
+             <Transition Name="TrIndietro" Target="CensimentoAZStatesHomePage" Type="Push" InputParams="MOTIVI" OutputParams="aziendatransitionname,MOTIVI,AziendaSoggettoId,Anagrafe_az" Application="RicercaAZ"/>
+        </Event>
+        <Event Name="IRPAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+             <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+        <Event Name="SospesoB10BarCodeStampRadio" Secure="true">
+             	<Transition Name="SospesoB10BarCodeStampRadio" Target="IndirizziRecapitiPrivacy"/>
+       	 </Event>
+       	<Event Name="SospesoPerModuloUnificato" Secure="true">
+           	<Transition Name="SospesoPerModuloUnificato" Target="IndirizziRecapitiPrivacy"/>
+       	</Event>
+       	<Event Name="NoStampaeSospesoSellaLife" Secure="true">
+           	<Transition Name="NoStampaeSospesoSellaLife" Target="IndirizziRecapitiPrivacy"/>
+       	</Event>
+    </State>
+
+    <State Name="ReloadIRP">
+        <Event Name="GeograficaRicercaConferma" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.IndirizziRecapitiPrivacyReloadExecuter" Retrieve="MOTIVI">
+             <Transition Name="TrConferma" Target="IndirizziRecapitiPrivacy"/>
+        </Event>
+    </State>
+
+
+    <State Name="AttributiFiscaliDocumenti">
+        <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.AttributiFiscaliDocumentiConfermaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED" Store="ONLUS_PRESENT">
+             <Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+             <Transition Name="TrNonConferma" Target="AttributiFiscaliDocumenti"/>
+             <Transition Name="TrSkipIntermediariCodiciSoggetto" Target="RiepilogoAzienda"/>
+             <Transition Name="TrModifica" Target="RiepilogoAzienda"/>
+             <Transition Name="TrClassificazioneFatca" Target="ClassificazioneFatcaCalcolata"/>
+        </Event>
+        <Event Name="DocumentiAggiungi" Executer="it.sella.anagrafe.sm.censimentoaz.DocumentiAggiungiExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <!--  <Event Name="DocDataDiScandenza" Executer="it.sella.anagrafe.sm.censimentoaz.AFDDataScadenzaConvertionExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI">
+			<Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+		</Event>  -->
+        <Event Name="DocumentiElimina" Executer="it.sella.anagrafe.sm.censimentoaz.DocumentiEliminaExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED" Secure="true">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="PopulateSettore" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateSettoreExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+
+	<Event Name="PopulateSettComm" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateSettCommExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="PopulateRamo" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateRamoExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="PopulateAttivita" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateAttivitaExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="PopulateAlbo" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateAlboExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="AFDAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+             <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+        <Event Name="AFDIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter" Retrieve="MOTIVI">
+             <Transition Name="TrIndietro" Target="IndirizziRecapitiPrivacy"/>
+        </Event>
+        <Event Name="AcquisisciW9" Executer="it.sella.anagrafe.sm.censimentoaz.W9AggiungiAZExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,IS_ALTE_RF_ALLOWED" Secure="true">
+             <Transition Name="TrConferma" Target="DummyW9ReLoad" Type="Push" Application="USPersonDetails" InputParams="W9_SOGGETTO_ID,CODICEFISCALEESTERO,NUMEROSICUREZZASOCIALAE,W9,W9LABELDISPLAY,ISFROMANAG,DATIANAG_DETAILS" OutputParams="W9DETAILS" />
+        </Event>
+        <Event Name="AcquisisciW8IMY" Executer="it.sella.anagrafe.sm.censimentoaz.W8iAggiungiAZExecuter">
+			<Transition Name="TrConferma" Target="DummyW8iReLoad" Type="Push" Application="GestoreFiscaliW8IMY"
+				InputParams="AziendaSoggettoId,W8IInputDetails" OutputParams="W8IOutput" />
+		</Event>
+		<Event Name="AcquisisciW8BEN" Executer="it.sella.anagrafe.sm.censimentoaz.W8BenAggiungiAZExecuter">
+			 <Transition Name="TrAnag" Target="DummyW8ReLoad" Type="Push" Application="GestoreFiscaliW8BEN"
+			 	InputParams="W8_SOGGETTO_ID,W8BENDetails" OutputParams="W8BENVIEW" />
+		</Event>
+        <Event Name="RicalcolaClassificazione" Executer="it.sella.anagrafe.sm.censimentoaz.RicalcolaClienteAFDExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+        	<Transition Name="TrConferma" Target="ReloadAFDForRicalcola" Type="Push" Application="ClienteClassificazione"
+        		InputParams="AziendaSoggettoId,clienteInputDetails" OutputParams="clienteOutputDetails" />
+        	<Transition Name="TrNonConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+
+         <Event Name="PopulateAttivitaSezione" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateAttivitaSezioneExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+         <Event Name="PopulateAttivitaDivisione" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateAttivitaDivisioneExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+         <Event Name="PopulateAttivitaClasse" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateAttivitaClasseExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="PopulateRamoNew" Executer="it.sella.anagrafe.sm.censimentoaz.PopulateRamoNewExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="GeograficaLuogoEmissione" Executer="it.sella.anagrafe.sm.censimentoaz.documenti.GeograficaLuogoEmissioneExecuter">
+          <Transition Name="TrRicerca" Type="Push" Application="GeograficaRicerca" InputParams="OPERATION,OPERATION_NAME" OutputParams="GEOGRAFICA_ID" Target="ReloadAttributiFiscaliDocumenti"/>
+      	</Event>
+      	<Event Name="fatca_soggetto_usa" Secure="true">
+      		<Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+      	</Event>
+    </State>
+    
+    <State Name="ClassificazioneFatcaCalcolata">
+		<Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.ClassificazioneFatcaCalcolataDefExecuter" Retrieve="IS_W9_CERT_ALLOWED,MOTIVI,performmodifica">
+			<Transition Name="TrConferma" Target="ClassificazioneFatcaCalcolataDetails"/>
+		</Event>		
+	</State>
+	
+	<State Name="ClassificazioneFatcaCalcolataDetails">
+		<Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.ClassificazioneFatcaConfermaExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+			<Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+			<Transition Name="TrModifica" Target="RiepilogoAzienda"/>
+			<Transition Name="TrNonConferma" Target="ClassificazioneFatcaCalcolataDetails"/>
+		</Event>
+		<Event Name="FatcaIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+			<Transition Name="TrIndietro" Target="AttributiFiscaliDocumenti"/>
+		</Event>
+		<Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+             <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+        <Event Name="FatcaAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="AcquisisciW9" Executer="it.sella.anagrafe.sm.censimentoaz.FatcaW9AggiungiAZExecuter" Retrieve="IS_W9_CERT_ALLOWED,MOTIVI,performmodifica">
+             <Transition Name="TrConferma" Target="FatcaDummyW9ReLoad" Type="Push" Application="USPersonDetails" InputParams="W9_SOGGETTO_ID,CODICEFISCALEESTERO,NUMEROSICUREZZASOCIALAE,W9,W9LABELDISPLAY,ISFROMANAG,DATIANAG_DETAILS" OutputParams="W9DETAILS" />
+        </Event>
+	</State>
+	
+	<State Name="FatcaDummyW9ReLoad" >
+            <Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.FatcaW9ReloadAZExecuter" Retrieve="IS_W9_CERT_ALLOWED,MOTIVI,performmodifica">
+                 <Transition Name="TrConferma" Target="ClassificazioneFatcaCalcolataDetails"/>
+            </Event>
+    </State>		
+    
+    <State Name="ReloadAttributiFiscaliDocumenti">
+		<Event Name="GeograficaLuogoEmissioneConferma" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.documenti.ReloadAttributiFiscaliDocumentiExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+			<Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+		</Event>
+	</State>
+
+    <State Name="DettaglioCollegamento">
+        <Event Name="CollegateAggiungi" Executer="it.sella.anagrafe.sm.censimentoaz.CollegateAggiungiExecuter">
+             <Transition Name="TrConferma" Target="Dummy" Type="Push" Application="CensimentoPF"
+                         InputParams="CENSIMENTO_PF_FOR_AZIENDA,RICERCA_FOR_AZ_DETAILS,RICERCA_AZ,SKIP_VARIA"
+                         OutputParams="SOGGETTO_ID" />
+			 <Transition Name="Tr8Cifre" Target="Dummy"/>
+             <Transition Name="TrNonConferma" Target="DettaglioCollegamento"/>
+        </Event>
+        <Event Name="CollegateElimina" Executer="it.sella.anagrafe.sm.censimentoaz.CollegateEliminaExecuter">
+             <Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+        </Event>
+        <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.CollegateConfermaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+             <Transition Name="TrModifica" Target="RiepilogoAzienda"/>
+             <Transition Name="TrNonConferma" Target="DettaglioCollegamento" />
+             <Transition Name="TrSkipIntermediari" Target="RiepilogoAzienda" />
+            <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+        <Event Name="CollegateAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+             <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+        <Event Name="DCIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrIndietro" Target="AttributiFiscaliDocumenti" />
+             <Transition Name="TrIndietroFatca" Target="ClassificazioneFatcaCalcolataDetails" />
+        </Event>
+        <!-- Existing Event for "CRMQuestionarioProfilo"   -->
+        <!-- <Event Name="CRMQuestionarioProfilo" Executer="it.sella.anagrafe.sm.censimentoaz.CRMQuestionarioPushExecuter">
+     	  	  <Transition Name="TrConferma" Type="Push" Application="CRMQuestionarioProfilo" InputParams="COL_ERR_PROF_ID,CODICE_QUEST" OutputParams="QUESTIONARIO_VIEW" Target="CollegateReload"/>
+         </Event> -->
+         <!-- New Event for "RichestaAccettazione"   -->
+         <Event Name="CRMQuestionarioProfilo" Executer="it.sella.anagrafe.sm.censimentoaz.RichestaAccettazionePushExecuter" Retrieve="ID_SOGGETTO">
+     	  	  <Transition Name="TrConferma" Type="Push" Application="RichestaAccettazione" InputParams="ID_SOGGETTO,ACCCL_CANALE,ACCCL_CONTESTO" OutputParams="ACCCL_StatoAccettazione,ACCCL_DescOutputAccettazione" Target="CollegateReload"/>
+         </Event>
+         <Event Name="docPoteriFirma" Executer="it.sella.anagrafe.sm.censimentoaz.PoteriFirmaCollegatePushExecuter">
+             <Transition Name="TrConferma" Target="CollegateReloadFromDocPoteri" Type="Push" Application="DocumentiPoteriFirma" InputParams="POTERIFIRMA_INPUTDETAILS" OutputParams="POTERIFIRMA_OUTPUTDETAILS"/>
+             <Transition Name="TrNonConferma" Target="DettaglioCollegamento"/>
+        </Event>
+    </State>
+
+    <State Name="Dummy" >
+        <Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.CollegateViewPopulateExecuter">
+             <Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+             <Transition Name="TrAccCliente" Type="Push" Application="RichestaAccettazione" InputParams="ID_SOGGETTO,ACCCL_CANALE,ACCCL_CONTESTO" OutputParams="ACCCL_StatoAccettazione,ACCCL_DescOutputAccettazione" Target="CollegateReload"/>
+             <!-- <Transition Name="TrCRMQuestionarioProfilo" Type="Push" Application="CRMQuestionarioProfilo" InputParams="COL_NULL_PROF_ID,CODICE_QUEST" OutputParams="QUESTIONARIO_VIEW" Target="CollegateReload"/> -->
+        </Event>
+    </State>
+    <State Name="CollegateReload" >
+         <Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.CollegateReloadExecuter">
+              <Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+              <Transition Name="TrDocPoteriFirma" Target="CollegateReloadFromDocPoteri" Type="Push" Application="DocumentiPoteriFirma" InputParams="POTERIFIRMA_INPUTDETAILS" OutputParams="POTERIFIRMA_OUTPUTDETAILS"/>
+         </Event>
+    </State>
+    
+    <State Name="CollegateReloadFromDocPoteri">
+         <Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.PoteriFirmaCollegateReloadExecuter">
+              <Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+         </Event>
+    </State>
+
+    <State Name="DummyW9ReLoad" >
+            <Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.W9ReloadAZExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+                 <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+            </Event>
+    </State>
+
+    <State Name="DummyW8iReLoad">
+		<Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.W8iReloadAZExecuter"
+				Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+			<Transition Name="TrConferma" Target="AttributiFiscaliDocumenti" />
+		</Event>
+	</State>
+
+	<State Name="DummyW8ReLoad">
+		<Event Name="DefaultEvent" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.W8BenReloadAZExecuter"
+				Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+			<Transition Name="TrConferma" Target="AttributiFiscaliDocumenti" />
+		</Event>
+	</State>
+
+    <State Name="IntermediariEventiMemo" >
+        <Event Name="IntermediariAggiungi" Executer="it.sella.anagrafe.sm.censimentoaz.IntermediariAggiungiExecuter">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="IntermediariElimina" Executer="it.sella.anagrafe.sm.censimentoaz.IntermediariEliminaExecuter">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="EventiAggiungi" Executer="it.sella.anagrafe.sm.censimentoaz.EventiAggiungiExecuter" Secure="true">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="EventiElimina" Executer="it.sella.anagrafe.sm.censimentoaz.EventiEliminaExecuter" Secure="true">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="EventiModifica" Executer="it.sella.anagrafe.sm.censimentoaz.EventiModificaExecuter" Secure="true">
+        	 <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="MemoAggiungi" Executer="it.sella.anagrafe.sm.censimentoaz.MemoAggiungiExecuter">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="MemoElimina" Executer="it.sella.anagrafe.sm.censimentoaz.MemoEliminaExecuter">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="MemoModifica" Executer="it.sella.anagrafe.sm.censimentoaz.MemoModificaExecuter">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="IEMAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+             <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+        <Event Name="IEMIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter">
+             <Transition Name="TrIndietro" Target="DettaglioCollegamento" />
+        </Event>
+        <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.IntermediariEventiMemoExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrNonConferma" Target="IntermediariEventiMemo"/>
+             <Transition Name="TrModifica" Target="RiepilogoAzienda"/>
+             <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+    </State>
+
+    <State Name="ReloadCodiceSoggetto">
+        <Event Name="GeograficaRicerca" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.CodiceSoggettoReloadExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica">
+             <Transition Name="TrConferma" Target="GestioneCodiceSoggetto"/>
+             <Transition Name="TrNonConferma" Target="GestioneCodiceSoggetto"/>
+        </Event>
+    </State>
+
+    <State Name="GestioneCodiceSoggetto" >
+           <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.GestioneCodiceSoggettoExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+                 <Transition Name="TrConferma" Target="RiepilogoAzienda" />
+                 <Transition Name="TrNonConferma" Target="GestioneCodiceSoggetto" />
+           </Event>
+           <Event Name="GeograficaRicerca" Executer="it.sella.anagrafe.sm.censimentoaz.CodiceSoggGeograficaRicercaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica">
+				 <Transition Name="TrRicerca" Type="Push" Application="GeograficaRicerca" InputParams="OPERATION,OPERATION_NAME" OutputParams="GEOGRAFICA_ID" Target="ReloadCodiceSoggetto"/>
+           </Event>
+           <Event Name="TramiteNazioneRicerca" Executer="it.sella.anagrafe.sm.censimentoaz.CodiceSoggettoReloadExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica">
+             	<Transition Name="TrConferma" Target="GestioneCodiceSoggetto"/>
+             	<Transition Name="TrNonConferma" Target="GestioneCodiceSoggetto"/>
+		   </Event>
+           <Event Name="GCSIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter">
+                 <Transition Name="TrIndietro" Target="IntermediariEventiMemo" />
+                 <Transition Name="TrIndietroII" Target="DettaglioCollegamento" />
+           </Event>
+           <Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+                <Transition Name="TrConferma" Target="Pop"/>
+           </Event>
+           <Event Name="GCSAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+                <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+           </Event>
+    </State>
+
+    <State Name="DatiAnagrafeAZ">
+    	<Event Name="DefaultEvent" Retrieve="Anagrafe_az" Default="true"/>
+        <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.DatiAnagraficiAZModificaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrNonConferma" Target="DatiAnagrafeAZ"/>
+        </Event>
+        <Event Name="DAAZAnnulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrAnnulla" Target="RiepilogoAzienda"/>
+        </Event>
+        <Event Name="GeograficaRicerca" Executer="it.sella.anagrafe.sm.censimentoaz.DatiAnagAZGeograficaRicercaExecuter">
+            <Transition Name="TrRicerca" Type="Push" Application="GeograficaRicerca" InputParams="OPERATION,OPERATION_NAME" OutputParams="GEOGRAFICA_ID" Target="ReloadDatiAnagAzienda"/>
+        </Event>
+    </State>
+
+    <State Name="RiepilogoAzienda" >
+        <Event Name="CalcolaDai" Executer="it.sella.anagrafe.sm.censimentoaz.CalcolaDaiAZExecuter" Retrieve="MOTIVI,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+            <Transition Name="TrDaiNonConferma" Target="RiepilogoAzienda"/>
+            <Transition Name="TrConferma" Target="CRMQuestionario"/>
+            <Transition Name="TrStampa" Type="Push" Application="StampeOnLine" Target="CRMQuestionario" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa"/>
+            <Transition Name="TrNonConferma" Target="RiepilogoAzienda"/>
+            <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+        <Event Name="IndirizziRecapitiPrivacyModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter" Retrieve="MOTIVI">
+             <Transition Name="TrConferma" Target="IndirizziRecapitiPrivacy"/>
+        </Event>
+        <Event Name="DatiAnagraficiAZModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter" Secure="true">
+             <Transition Name="TrConferma" Target="DatiAnagrafeAZ"/>
+        </Event>
+        <Event Name="DatiAnagraficiAZModificaNotSec" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter">
+             <Transition Name="TrConferma" Target="DatiAnagrafeAZ"/>
+        </Event>
+        <Event Name="AttributiFiscaliDocumentiModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="AttributiFiscaliDocumenti"/>
+        </Event>
+        <Event Name="RicalcolaFatca" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter" Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="ClassificazioneFatcaCalcolata"/>
+        </Event>
+        <Event Name="CollegateModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter">
+             <Transition Name="TrConferma" Target="DettaglioCollegamento"/>
+        </Event>
+        <Event Name="CodiceSoggettoModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica">
+             <Transition Name="TrConferma" Target="GestioneCodiceSoggetto"/>
+        </Event>
+        <Event Name="IntermediariEventiMemoModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter">
+             <Transition Name="TrConferma" Target="IntermediariEventiMemo"/>
+        </Event>
+        <Event Name="StampeOnlusPdfPrint" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZOnlusStampeExecuter" >
+             <Transition Name="TrConferma" Type="Push" Application="StampeOnLine" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa" Target="ReloadRiepilogoAzienda"/>
+        </Event>
+        <!-- <Event Name="DatiPrivacyPdfPrint" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZStampeExecuter" >
+             <Transition Name="TrConferma" Type="Push" Application="StampeOnLine" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa" Target="ReloadRiepilogoAzienda"/>
+        </Event> -->
+        <Event Name="Conferma" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAziendaExecuter" Secure="true" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="CRMQuestionario"/>
+             <Transition Name="TrStampa" Type="Push" Application="StampeOnLine" Target="CRMQuestionario" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa"/>
+             <Transition Name="TrNonConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+        <Event Name="ConfermaSocket" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAziendaExecuter" Secure="true" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="CRMQuestionario"/>
+             <Transition Name="TrStampa" Type="Push" Application="StampeOnLine" Target="CRMQuestionario" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa"/>
+             <Transition Name="TrNonConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+        <Event Name="Create8Cifre" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAziendaExecuter" Secure="true" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="CRMQuestionario"/>
+             <Transition Name="TrStampa" Type="Push" Application="StampeOnLine" Target="CRMQuestionario" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa"/>
+             <Transition Name="TrNonConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+         <!-- Event added by Durai -->
+        <Event Name="ConfermaNoHost" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAziendaExecuter" Secure="true" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrConferma" Target="CRMQuestionario"/>
+             <Transition Name="TrStampa" Type="Push" Application="StampeOnLine" Target="CRMQuestionario" InputParams="xmlData,documentoCode,ristampa,archiviazione" OutputParams="stampa"/>
+             <Transition Name="TrNonConferma" Target="RiepilogoAzienda"/>
+             <Transition Name="TrCodiceSoggetto" Target="GestioneCodiceSoggetto"/>
+        </Event>
+        <Event Name="Annulla" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZAnnullaExecuter">
+             <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+        <Event Name="RAIndietro" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZIndietroExecuter" Retrieve="MOTIVI,IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+             <Transition Name="TrIndietro" Target="IntermediariEventiMemo" />
+             <Transition Name="TrIndietroI" Target="GestioneCodiceSoggetto" />
+              <Transition Name="TrSkipIntermediariCodiciSoggetto" Target="AttributiFiscaliDocumenti" />
+        </Event>
+        <Event Name="SoggettoIDDisplayInRiepilogoPage" Secure="true">
+             	<Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+       	</Event>
+        <Event Name="ConfermaModifica" Secure="false">
+        	<Transition Name="TrConferma" Target="ReloadIndirizzi" Type="Push"
+        		Application="ConfermaModifica" InputParams="AziendaSoggettoId" OutputParams="INDIRIZZI_COLLECTION,INDIRIZZI_REDIRECT_EVENT" />
+        </Event>
+        <Event Name="RicalcolaClassificazione"
+        	Executer="it.sella.anagrafe.sm.censimentoaz.RicalcolaClienteRiepilogoExecuter">
+        	<Transition Name="TrConferma"
+        		Target="ReloadRiepilogoAziendaForRicalcola" Type="Push"
+        		Application="ClienteClassificazione"
+        		InputParams="AziendaSoggettoId,clienteInputDetails"
+        		OutputParams="clienteOutputDetails" />
+        </Event>
+           <Event Name="SegnalatoreModifica" Executer="it.sella.anagrafe.sm.censimentoaz.RiepilogoAZRedirectExecuter" Secure="true">
+             <Transition Name="TrConferma" Target="Segnalatore"/>
+        </Event>
+        <Event Name="ManageRecapiti" Secure="true">
+        	<Transition Name="TrConferma" Target="ReloadRiepilogoForManageRecapiti" Type="Push"
+        		Application="ManageRecapiti" InputParams="AziendaSoggettoId,THROUGH_ANAGRAFE" OutputParams="RecapitiCollection,ManageRecapiti_Redirect,Canale_Preferito_View" />
+        </Event>
+         <Event Name="CronistoriaClassificazione">
+        	<Transition Name="TrConferma"
+        		Target="ReloadCronistoriaClassificazione" Type="Push"
+        		Application="CronistoriaClassificazione" InputParams="AziendaSoggettoId" />
+        </Event>
+        <Event Name="fatca_soggetto_usa" Secure="true">
+      		<Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+      	</Event>
+      	<Event Name="CronistoriaPoteriFirma">
+        	<Transition Name="TrConferma" Target="ReloadRiepilogoAzienda" Type="Push" Application="CronistoriaPoteriFirma" InputParams="AziendaSoggettoId" />
+        </Event>
+    </State>
+	<State Name="Segnalatore">
+	   <Event Name="SegConferma"  Executer="it.sella.anagrafe.sm.censimentoaz.SegnalatoreConfermaAZExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED" >
+           <Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+           <Transition Name="TrNonConferma" Target="Segnalatore"/>
+       </Event>
+        <Event Name="Annulla"  Executer="it.sella.anagrafe.sm.censimentoaz.SegnalatoreAnnulaAZExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+           <Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+       </Event>
+        <Event Name="SegDipedenteIntestazioneSearch"  Executer="it.sella.anagrafe.sm.censimentoaz.SegDipedenteIntestazioneSearchExecuter" >
+           <Transition Name="TrConferma" Target="Segnalatore"/>
+       </Event>
+      </State>
+    <State Name="ReloadRiepilogoAzienda">
+        <Event Name="Default" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.CensimentoAZRiepilogoReloadExecuter" Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+            <Transition Name="TrConferma" Target="RiepilogoAzienda"/>
+        </Event>
+    </State>
+	<State Name="CRMQuestionario">
+    	<Event Name="Default" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.CRMQuestionarioDefaultExecuter">
+        	<Transition Name="TrScheda" Type="Push" Application="CRMQuestionarioProfilo" InputParams="AziendaSoggettoId,CODICE_QUEST,PRINT_PDF_FLAG,cssestatus,message,csseResultMap" OutputParams="QUESTIONARIO_VIEW" Target="Intermediate"/>
+            <Transition Name="TrPop" Target="Intermediate"/>
+		</Event>
+	</State>
+	<State Name="ReloadRiepilogoAziendaForRicalcola"  >
+           <Event Name="Default" Default="true"
+           	Executer="it.sella.anagrafe.sm.censimentoaz.ClienteClassificazioneReloadExecuter"
+           	Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+           	<Transition Name="TrConferma" Target="RiepilogoAzienda" />
+           </Event>
+	</State>
+	<State Name="ReloadCronistoriaClassificazione"  >
+           <Event Name="Default" Default="true"
+           	Executer="it.sella.anagrafe.sm.censimentoaz.ClienteClassificazioneReloadExecuter"
+           	Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+           	<Transition Name="TrConferma" Target="RiepilogoAzienda" />
+           </Event>
+	</State>
+	<State Name="ReloadIndirizzi">
+           <Event Name="Default" Default="true"
+           	Executer="it.sella.anagrafe.sm.censimentoaz.IndirizziReloadExecuter"
+           Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+           	<Transition Name="TrRiepilogo" Target="RiepilogoAzienda" />
+           	<Transition Name="TrHomePage" Target="Pop" />
+           </Event>
+	 </State>
+	<State Name="ReloadRiepilogoForManageRecapiti">
+           <Event Name="Default" Default="true"
+           	Executer="it.sella.anagrafe.sm.censimentoaz.ManageRecapitiReloadExecuter"
+           	Retrieve="MOTIVI,ONLUS_PRESENT,DAI_VALUE,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+           	<Transition Name="TrRiepilogo" Target="RiepilogoAzienda" />
+           	<Transition Name="TrHomePage" Target="Pop" />
+           </Event>
+	</State>
+	<State Name="ReloadAFDForRicalcola"  >
+           <Event Name="Default" Default="true"
+           	Executer="it.sella.anagrafe.sm.censimentoaz.RicalcolaAFDReloadExecuter"
+           	Retrieve="IS_W8_CERT_ALLOWED,IS_W8I_CERT_ALLOWED,IS_W9_CERT_ALLOWED,MOTIVI,performmodifica,A97_3bar46_link,A97_6bar46_link,apivacausale,apivadescrip,RegimeExists,RegimeDataRevocaExists,Regime_Attivazione_Link,Regime_Revoca_Link,alboProfessione,IS_ALTE_RF_ALLOWED">
+           	<Transition Name="TrConferma" Target="AttributiFiscaliDocumenti" />
+           </Event>
+	</State>
+	
+	<State Name="ReloadDatiAnagAzienda">
+      <Event Name="Default" Default="true" Executer="it.sella.anagrafe.sm.censimentoaz.DatiAnagAZReloadExecuter">
+          <Transition Name="TrConferma" Target="DatiAnagrafeAZ"/>
+      </Event>
+  	</State>
+  	
+    <State Name="Pop" Final="true">
+    </State>
+
+    <IOParams>
+    	<Input Params=""/>
+    	<Input Params="MOTIVI:java.util.Collection"/>
+		<Input Params="ONLY_FOR_ANAGRAFE:String,MOTIVI:java.util.Collection"/>
+		<Input Params="variazioneAziendaSoggettoId:String"/>
+		<Input Params="ONLY_FOR_ANAGRAFE:String,variazioneAziendaSoggettoId:String"/>
+		<Input Params="MOTIVI:java.util.Collection,variazioneAziendaSoggettoId:String"/>
+		<Input Params="ONLY_FOR_ANAGRAFE:String,variazioneAziendaSoggettoId:String,MOTIVI:java.util.Collection"/>
+
+		<Input Params="SKIP_VARIA:java.lang.Boolean"/>
+		<Input Params="MOTIVI:java.util.Collection,SKIP_VARIA:java.lang.Boolean"/>
+		<Input Params="ONLY_FOR_ANAGRAFE:String,MOTIVI:java.util.Collection,SKIP_VARIA:java.lang.Boolean"/>
+		<Input Params="variazioneAziendaSoggettoId:String,SKIP_VARIA:java.lang.Boolean"/>
+		<Input Params="ONLY_FOR_ANAGRAFE:String,variazioneAziendaSoggettoId:String,SKIP_VARIA:java.lang.Boolean"/>
+		<Input Params="MOTIVI:java.util.Collection,variazioneAziendaSoggettoId:String,SKIP_VARIA:java.lang.Boolean"/>
+		<Input Params="ONLY_FOR_ANAGRAFE:String,variazioneAziendaSoggettoId:String,MOTIVI:java.util.Collection,SKIP_VARIA:java.lang.Boolean"/>
+		<Output Params="AziendaSoggettoId:Long"/>
+    </IOParams>
+
+    <State Name="Intermediate" Clear="QUESTIONARIO_VIEW,CODICE_QUEST,PRINT_PDF_FLAG,cssestatus,message,csseResultMap">
+        <Event Name="Default" Default="true">
+            <Transition Name="TrConferma" Target="Pop"/>
+        </Event>
+    </State>
+
+</StateMachine>
